@@ -12,8 +12,8 @@ c = Controller(
     arm_length=0.2,
     radius=0.02,
     n_casters=1,
-    mass=0.00008,
-    inertia=0.00008,
+    mass=0.1,
+    inertia=0.0003,
     beta=[0.]
     #beta=[0., np.pi/2, np.pi, 3*np.pi/2]
 )
