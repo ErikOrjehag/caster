@@ -8,7 +8,8 @@ from .vrep_files.vrepConst import \
     simx_opmode_oneshot, \
     sim_floatparam_simulation_time_step, \
     sim_boolparam_display_enabled, \
-    sim_handle_all
+    sim_handle_all, \
+    sim_scripttype_customizationscript
 
 
 class VREP(Interface):
@@ -121,6 +122,27 @@ class VREP(Interface):
             vrep.simxSynchronousTrigger(self.clientID)
             self.t += self.dt
 
+    def send_velocities(self, u):
+        for i, joint_handle in enumerate(self.joint_handles):
+            _ = vrep.simxSetJointForce(
+                self.clientID,
+                joint_handle,
+                1000,
+                simx_opmode_blocking
+            )
+            if _ != 0:
+                raise Exception('Error setting joint force, return code:', _)
+            _ = vrep.simxSetJointTargetVelocity(
+                self.clientID,
+                joint_handle,
+                u[i],
+                simx_opmode_blocking
+            )
+            if _ != 0:
+                raise Exception('Error setting joint target velocity, return code:', _)
+        vrep.simxSynchronousTrigger(self.clientID)
+        self.t += self.dt
+
     def get_feedback(self):
         for i, joint_handle in enumerate(self.joint_handles):
             _, self.q[i] = vrep.simxGetJointPosition(
@@ -141,3 +163,18 @@ class VREP(Interface):
                 raise Exception('Error retrieving joint velocity, return code:', _)
 
         return self.q, self.qdot
+
+    def send_trajectory(self, data):
+        _ = vrep.simxCallScriptFunction(
+            self.clientID,
+            'Graph',
+            sim_scripttype_customizationscript,
+            'trajectory',
+            [],
+            data,
+            [],
+            bytearray(),
+            simx_opmode_blocking
+        )[0]
+        if _ != 0:
+            raise Exception('Error sending user data, return code:', _)
