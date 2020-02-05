@@ -127,7 +127,7 @@ class VREP(Interface):
             _ = vrep.simxSetJointForce(
                 self.clientID,
                 joint_handle,
-                1000,
+                10000,
                 simx_opmode_blocking
             )
             if _ != 0:
