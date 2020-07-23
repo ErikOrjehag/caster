@@ -67,8 +67,8 @@
                 document.getElementById("ros-debug").innerHTML = "ROS connection closed!";
             });
 
-            var host = "192.168.12.11";
-            //var host = window.location.hostname;
+            //var host = "192.168.12.11";
+            var host = window.location.hostname;
             ros.connect(`ws://${host}:9090`);
 
             var cmdVel = new ROSLIB.Topic({
