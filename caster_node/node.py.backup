@@ -1,19 +1,18 @@
 # -*- coding: utf-8 -*-
-#import rclpy
-#from rclpy.node import Node
-#from geometry_msgs.msg import Twist
+import rclpy
+from rclpy.node import Node
+from geometry_msgs.msg import Twist
 
-from controller1 import Controller
-from caster import *
+from caster_node.controller1 import Controller
+from caster_node.caster import *
 import numpy as np
-import time
 
-class CasterNode:
+class CasterNode(Node):
 
     def __init__(self):
-        #super().__init__('caster_node')
-        #self.subscription = self.create_subscription(Twist, 'cmd_vel', self.cmd_vel_cb, 10)
-        #self.subscription  # prevent unused variable warning
+        super().__init__('caster_node')
+        self.subscription = self.create_subscription(Twist, 'cmd_vel', self.cmd_vel_cb, 10)
+        self.subscription  # prevent unused variable warning
         
         self.casters = [
             Caster("208C3373304B", 0),
@@ -40,7 +39,7 @@ class CasterNode:
         
         #exit()
         print("Setup done")
-        #self.timer = self.create_timer(0.2, self.timer_cb)
+        self.timer = self.create_timer(0.2, self.timer_cb)
 
         
         
@@ -72,21 +71,20 @@ class CasterNode:
         run_shutdown_sequence(self.casters)
 
 def main(args=None):
-    #rclpy.init(args=args)
+    rclpy.init(args=args)
 
     node = CasterNode()
-    #exit()
+    exit()
     print("Spin")
-    #rclpy.spin(node)
-    while True:
-        time.sleep(0.1)
+    rclpy.spin(node)
+
     node.stop_motors()
     
     # Destroy the node explicitly
     # (optional - otherwise it will be done automatically
     # when the garbage collector destroys the node object)
-    #node.destroy_node()
-    #rclpy.shutdown()
+    node.destroy_node()
+    rclpy.shutdown()
 
 
 if __name__ == '__main__':
